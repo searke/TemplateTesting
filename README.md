@@ -13,7 +13,10 @@ testingAssertions
 "testingAssertions" are symbolic assertions of something that should be
 True:
 ```Mathematica
-     myAssertion =  testingAssertion[StringQ["This is a string"], "ID" ->"SimpleTest"] 
+     myAssertion =
+	testingAssertion[
+		StringQ["This is a string"],
+		"ID" ->"SimpleTest"] 
 ```
 The "ID" is optional but should always be used. A assertions ID will become part of the ID of any test based on it.
 
@@ -49,8 +52,12 @@ DateObject for every day of the week:
 
 ```Mathematica
     myAssertions = {
-        testingAssertion[DateObjectQ@Interpreter["ComputedDate"]["Monday"],  "ID" -> "DayOfWeek-Monday"],
-        testingAssertion[DateObjectQ@Interpreter["ComputedDate"]["Tuesday"], "ID" -> "DayOfWeek-Tuesday"],
+        testingAssertion[
+		DateObjectQ@Interpreter["ComputedDate"]["Monday"],
+		"ID" -> "DayOfWeek-Monday"],
+        
+	testingAssertion[DateObjectQ@Interpreter["ComputedDate"]["Tuesday"],
+	"ID" -> "DayOfWeek-Tuesday"],
         ....
     }
 
@@ -59,11 +66,17 @@ DateObject for every day of the week:
 This is verbose. The templateTesting package provides a function called
 **expandAllCombinations** to make this easy:
 ```Mathematica
-    enumeratedVals = { "DayOfWeek" ->{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}};
+    enumeratedVals = 
+	{"DayOfWeek" ->
+		{"Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"}};
 
-    myAssertionTemplate = testingAssertion[DateObjectQ@Interpreter["ComputedDate"]["a_DayOfWeek"],  "ID" -> "DayOfWeek-"<>"a_DayOfWeek"];
+    myAssertionTemplate = 
+	testingAssertion[
+		DateObjectQ@Interpreter["ComputedDate"]["a_DayOfWeek"],
+		 "ID" -> "DayOfWeek-"<>"a_DayOfWeek"];
 
-    myAssertions = expandAllCombinations[enumeratedVals][myAssertionTemplate]
+    myAssertions =
+	 expandAllCombinations[enumeratedVals][myAssertionTemplate]
 ```
 This generates the list of testingAssertions we wanted. The magic part of this is the string "a\_DayOfWeek". expandAllCombinations takes "a\_DayOfWeek" and replaces all instances of "a\_DayOfWeek" with a particular value from "DayOfWeek" in
 enumeratedVals. The use of "a" before the underscore is not special. We
@@ -75,12 +88,17 @@ replaced with the same day of the week, but all instances of
 For example, suppose we want to test WolframAlpha with the WolframAlpha function. It should always return a Quantity expression for input like: "Days between Monday and Tuesday". But we want to run this test for all possible combinations of
 days of the week:
 ```Mathematica
-    enumeratedVals = {"DayOfWeek" -> {"Monday", "Tuesday", "Wednesday",  "Thursday", "Friday", "Saturday", "Sunday"}};
+    enumeratedVals =
+	 {"DayOfWeek" -> {"Monday", "Tuesday", "Wednesday",  "Thursday", "Friday", "Saturday", "Sunday"}};
 
     myAssertionTemplate = 
-      testingAssertion[QuantityQ@WolframAlpha[ "Days between " <> "a_DayOfWeek" <> " and " <>  "b_DayOfWeek", {{"Result", 1}, "ComputableData"}]];
+      testingAssertion[
+	QuantityQ@WolframAlpha[
+		"Days between " <> "a_DayOfWeek" <> " and " <>  "b_DayOfWeek",
+		 {{"Result", 1}, "ComputableData"}]];
 
-    myAssertions = expandAllCombinations[enumeratedVals][myAssertionTemplate]
+    myAssertions =
+	 expandAllCombinations[enumeratedVals][myAssertionTemplate]
 ```
 Boht "a_DayOfWeek" and "b_DayOfWeek" will be replaced with days of the week, but will be replaced separately. We now have 7 times 7, or 49, testingAssertions! expandAllCombinations produces every possible combination for us.
 
@@ -112,26 +130,34 @@ combination.
 
        (* For every wordlist type, RandomWord should return an element of that WordlIst *)
         testingAssertion[
-            WordList["a_wordListType"] ~ MemberQ ~ RandomWord["a_wordListType"],
-            "ID" :> "InWordList-" <> "a_wordListType"
+		WordList["a_wordListType"]
+		 ~ MemberQ ~ 
+		RandomWord["a_wordListType"],
+		"ID" :> "InWordList-" <> "a_wordListType"
         ], 
 
         (* RandomWord can be given a number for how many words to return *)
          testingAssertion[
-            WordList["a_wordListType"] ~ SubsetQ ~ RandomWord["a_wordListType", "n_rndCountNumber"],
-            "ID" :> "CountSubsetQWordList-" <> "a_wordListType"
+		WordList["a_wordListType"]
+		 ~ SubsetQ ~
+		 RandomWord["a_wordListType", "n_rndCountNumber"],
+            	"ID" :> "CountSubsetQWordList-" <> "a_wordListType"
         ],
 
 	(* RandomWord should return a list with the specified length  *)
          testingAssertion[
-            Length@RandomWord["a_wordListType", "n_rndCountNumber"] == "n_rndCountNumber"]
-            "ID" :> "RandomWordCount-" <> "a_wordListType"<> "-" <> ToString["n_rndCountNumber"]
+		Length@RandomWord["a_wordListType", "n_rndCountNumber"]
+		 ==
+		 "n_rndCountNumber"]
+            	"ID" :> "RandomWordCount-" <> "a_wordListType"<> "-" <> ToString["n_rndCountNumber"]
         ],
 
 	(* RandomWord can be given a part of speech. This shouldn't affect that the result is in the correct WordList *)
           testingAssertion[
-             WordList["a_wordListType"] ~ MemberQ ~ RandomWord[{"a_wordListType","b_partOfSpeech"}],
-             "ID" :> "SubsetQWordList-PartOfSpeech-" <> "a_wordListType" <> "-" <>"b_partOfSpeech"
+		WordList["a_wordListType"]
+		 ~ MemberQ ~ 
+		RandomWord[{"a_wordListType","b_partOfSpeech"}],
+            	 "ID" :> "SubsetQWordList-PartOfSpeech-" <> "a_wordListType" <> "-" <>"b_partOfSpeech"
         ]
     };
 ```
