@@ -56,8 +56,9 @@ DateObject for every day of the week:
 		DateObjectQ@Interpreter["ComputedDate"]["Monday"],
 		"ID" -> "DayOfWeek-Monday"],
         
-	testingAssertion[DateObjectQ@Interpreter["ComputedDate"]["Tuesday"],
-	"ID" -> "DayOfWeek-Tuesday"],
+	testingAssertion[
+		DateObjectQ@Interpreter["ComputedDate"]["Tuesday"],
+		"ID" -> "DayOfWeek-Tuesday"],
         ....
     }
 
@@ -72,8 +73,9 @@ This is verbose. The templateTesting package provides a function called
 
     myAssertionTemplate = 
 	testingAssertion[
-		DateObjectQ@Interpreter["ComputedDate"]["a_DayOfWeek"],
-		 "ID" -> "DayOfWeek-"<>"a_DayOfWeek"];
+		DateObjectQ@Interpreter["ComputedDate"]["a_DayOfWeek"]
+		,
+		"ID" -> "DayOfWeek-"<>"a_DayOfWeek"];
 
     myAssertions =
 	 expandAllCombinations[enumeratedVals][myAssertionTemplate]
@@ -128,36 +130,40 @@ combination.
 ```Mathematica
     myAssertions = {
 
-       (* For every wordlist type, RandomWord should return an element of that WordlIst *)
-        testingAssertion[
+(* For every wordlist type, RandomWord should return an element of that WordlIst *)
+	testingAssertion[
 		WordList["a_wordListType"]
 		 ~ MemberQ ~ 
-		RandomWord["a_wordListType"],
+		RandomWord["a_wordListType"]
+		,
 		"ID" :> "InWordList-" <> "a_wordListType"
         ], 
 
-        (* RandomWord can be given a number for how many words to return *)
-         testingAssertion[
+(* RandomWord can be given a number for how many words to return *)
+	testingAssertion[
 		WordList["a_wordListType"]
 		 ~ SubsetQ ~
-		 RandomWord["a_wordListType", "n_rndCountNumber"],
-            	"ID" :> "CountSubsetQWordList-" <> "a_wordListType"
+		 RandomWord["a_wordListType", "n_rndCountNumber"]
+		,
+		"ID" :> "CountSubsetQWordList-" <> "a_wordListType"
         ],
 
-	(* RandomWord should return a list with the specified length  *)
-         testingAssertion[
+(* RandomWord should return a list with the specified length  *)
+	testingAssertion[
 		Length@RandomWord["a_wordListType", "n_rndCountNumber"]
 		 ==
-		 "n_rndCountNumber"]
-            	"ID" :> "RandomWordCount-" <> "a_wordListType"<> "-" <> ToString["n_rndCountNumber"]
+		 "n_rndCountNumber"
+		,
+		"ID" :> "RandomWordCount-" <> "a_wordListType"<> "-" <> ToString["n_rndCountNumber"]
         ],
 
-	(* RandomWord can be given a part of speech. This shouldn't affect that the result is in the correct WordList *)
-          testingAssertion[
+(* RandomWord can be given a part of speech. This shouldn't affect that the result is in the correct WordList *)
+	testingAssertion[
 		WordList["a_wordListType"]
 		 ~ MemberQ ~ 
-		RandomWord[{"a_wordListType","b_partOfSpeech"}],
-            	 "ID" :> "SubsetQWordList-PartOfSpeech-" <> "a_wordListType" <> "-" <>"b_partOfSpeech"
+		RandomWord[{"a_wordListType","b_partOfSpeech"}]
+		,
+		"ID" :> "SubsetQWordList-PartOfSpeech-" <> "a_wordListType" <> "-" <>"b_partOfSpeech"
         ]
     };
 ```
@@ -200,7 +206,8 @@ The function `Interpreter\["Number"\] takes a string and tries to output the num
 	 testingAssertion[
 		Interpreter["Number"]["a_numberExample"["Input"]]
 		 ==
-		"a_numberExample"["Output"],
+		"a_numberExample"["Output"]
+		,
 		"ID" -> "myID"];
 
     myAssertions = expandAllCombinations[enumeratedVals][myAssertionTemplate]
