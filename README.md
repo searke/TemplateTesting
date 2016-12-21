@@ -63,9 +63,9 @@ This is verbose. The templateTesting package provides a function called
 
     myAssertionTemplate = testingAssertion[DateObjectQ@Interpreter["ComputedDate"]["a_DayOfWeek"],  "ID" -> "DayOfWeek-"<>"a_DayOfWeek"];
 
-    myAssertions = ExpandAllCombinations[enumeratedVals][myAssertionTemplate]
+    myAssertions = expandAllCombinations[enumeratedVals][myAssertionTemplate]
 ```
-This generates the list of testingAssertions we wanted. The magic part of this is the string "a\_DayOfWeek". ExpandAllCombinations takes "a\_DayOfWeek" and replaces all instances of "a\_DayOfWeek" with a particular value from "DayOfWeek" in
+This generates the list of testingAssertions we wanted. The magic part of this is the string "a\_DayOfWeek". expandAllCombinations takes "a\_DayOfWeek" and replaces all instances of "a\_DayOfWeek" with a particular value from "DayOfWeek" in
 enumeratedVals. The use of "a" before the underscore is not special. We
 could have used anythings else. We could have used both "a\_DayOfWeek"
 and "b\_DayOfWeek". All instances of "a\_DayofWeek would have been
@@ -82,7 +82,7 @@ days of the week:
 
     myAssertions = expandAllCombinations[enumeratedVals][myAssertionTemplate]
 ```
-Boht "a_DayOfWeek" and "b_DayOfWeek" will be replaced with days of the week, but will be replaced separately. We now have 7 times 7, or 49, testingAssertions! ExpandAllCombinations produces every possible combination for us.
+Boht "a_DayOfWeek" and "b_DayOfWeek" will be replaced with days of the week, but will be replaced separately. We now have 7 times 7, or 49, testingAssertions! expandAllCombinations produces every possible combination for us.
 
 ### An Actual Example of How it is Used in Testing
 
@@ -128,7 +128,7 @@ combination.
             "ID" :> "RandomWordCount-" <> "a_wordListType"<> "-" <> ToString["n_rndCountNumber"]
         ],
 
-          (* RandomWord can be given a part of speech. This shouldn't affect that the result is in the correct WordList *)
+	(* RandomWord can be given a part of speech. This shouldn't affect that the result is in the correct WordList *)
           testingAssertion[
              WordList["a_wordListType"] ~ MemberQ ~ RandomWord[{"a_wordListType","b_partOfSpeech"}],
              "ID" :> "SubsetQWordList-PartOfSpeech-" <> "a_wordListType" <> "-" <>"b_partOfSpeech"
@@ -159,25 +159,25 @@ So far, we have used strings with one underscore to represent values that should
 
 The function `Interpreter\["Number"\] takes a string and tries to output the number that it represents. Consider this simple set of examples for Interpreter\["Number"\]. Each example has an example input and a corresponding example output stored as a list of Associations:
 ```Mathematica
-    enumeratedVals = { "numberExample" ->{
-
-                                   <|"Input" ->"Three"
-                                       "Output" -> 3|>,
+    enumeratedVals =
+	{"numberExample" ->{
+		<|"Input" ->"Three",
+		  "Output" -> 3|>,
                                    
-                                    <|"Input" ->"2"
-                                       "Output" ->2|>,
+		<|"Input" ->"2",
+                  "Output" ->2|>,
 
-                                   <|"Input" ->"Seven"
-                                       "Output" ->7|>};
+		<|"Input" ->"Seven",
+		  "Output" ->7|>};
 
     myAssertionTemplate =
 	 testingAssertion[
 		Interpreter["Number"]["a_numberExample"["Input"]]
 		 ==
-                "a_numberExample"["Output"],
-		 "ID" -> "myID"];
+		"a_numberExample"["Output"],
+		"ID" -> "myID"];
 
-    myAssertions = ExpandAllCombinations[enumeratedVals][myAssertionTemplate]
+    myAssertions = expandAllCombinations[enumeratedVals][myAssertionTemplate]
 ```
 This is a bit clunky. First of all code like this:
 ```Mathematica
@@ -199,8 +199,8 @@ Fortunately, complex tags allow us to select components of associations. We just
 	testingAssertion[
 		Interpreter["Number"]["a_numberExample_Input"]
 		==
-                "a_numberExample_Output",
-                "ID" -> "myID"];
+		"a_numberExample_Output",
+		"ID" -> "myID"];
 ```	
 And it produces nicely readable VerificationTests like:
 ```Mathematica
