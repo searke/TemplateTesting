@@ -22,7 +22,6 @@ Begin["`Private`"] (* Begin Private Context *)
 SetAttributes[testingAssertion, HoldAll]
 Options[testingAssertion] = {"ID" -> ""};
 
-SetAttributes[tag, HoldAll];
 
 (* tagLookup is similar to Lookup but uses tag expressions.
    tags are a way of handling nested associations and rules. 
