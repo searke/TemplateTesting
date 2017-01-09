@@ -1,17 +1,17 @@
 #TemplateTesting
 
-A package for randomized testing and for testing over exhausting
+A package for randomized testing and for testing over exhaustive
 possible combinations of values.
 
-TemplateTesting supports DRY coding by factoring otherwise repetitive tests into templates and some data to be repeatedly used on that template. Tests are described as templates which are later filled in with data. 
+TemplateTesting is a minimalist templating system for tests that encourages DRY coding by factoring otherwise repetitive tests into templates and data. Tests are described as templates which are later filled in with all possible data combinations. 
 
-Althought it differs significantly from them, this TemplateTesting is inspired feaures in Haskell's QuickCheck and Python's Hypothesis packages. 
+TemplateTesting is inspired feaures in [Haskell's QuickCheck](https://wiki.haskell.org/Introduction_to_QuickCheck1) and [Python's Hypothesis](http://hypothesis.works/). It's significantly different however reflecting my own thoughts about what is important in testing and some unique features of the Wolfram Language.  
 
 testingAssertions
 -----------------
 
-"testingAssertions" are symbolic assertions of something that should be
-True:
+"testingAssertions" are symbolic assertions:
+
 ```Mathematica
      myAssertion =
 	testingAssertion[
@@ -20,7 +20,7 @@ True:
 ```
 The "ID" is optional but should always be used. A assertions ID will become part of the ID of any test based on it.
 
-A testingAssertion does not evaluate. It is just useful for programmatically creating tests to run. To actually test a testingAssertion, it has to be given to the function called "testTestingAssertion".
+A testingAssertion does not evaluate by itself. It is just useful template for programmatically creating tests to run. To actually test a testingAssertion, it has to ran by "testTestingAssertion".
 "testTestingAssertion" first takes a string which is the base of the
 TestID and then takes the testing assertion, turning it into a
 VerificationTest.
@@ -39,16 +39,12 @@ executed immediately.
     ]
 ```
 
-"testingAssertion"s are an abstraction layer which makes it
-easier to programmatically generating new tests. The TemplateTesting
-package provides tools for programmatically generating tests with
-"testingAssertion"s.
+The TemplateTesting package provies tools for running testingAssertions, but also provides tools for programmatically generating and manipulating testingAssertions. This allows it to be useful for statically generating test files or for generating tests at run-time.
 
 Generating testingAssertions with expandAllCombinations
 -------------------------------------------------------
 
-Supposed we wanted to test that Interpreter\["ComputedDate"\] returned a
-DateObject for every day of the week:
+Interpreter\["ComputedDate"\] is a function that takes a string and returns what day of the week it represents. We wante to test that Interpreter\["ComputedDate"\] returns a DateObject for every day of the week:
 
 ```Mathematica
     myAssertions = {
@@ -80,14 +76,14 @@ This is verbose. The templateTesting package provides a function called
     myAssertions =
 	 expandAllCombinations[enumeratedVals][myAssertionTemplate]
 ```
-This generates the list of testingAssertions we wanted. The magic part of this is the string "a\_DayOfWeek". expandAllCombinations takes "a\_DayOfWeek" and replaces all instances of "a\_DayOfWeek" with a particular value from "DayOfWeek" in
+This generates the list of testingAssertions we wanted. The magic part of this is the string "a\_DayOfWeek". This intentionally looks similar to the Wolfram Languae's pattern matching syntax. expandAllCombinations takes "a\_DayOfWeek" and replaces all instances of "a\_DayOfWeek" with a particular value from "DayOfWeek" in
 enumeratedVals. The use of "a" before the underscore is not special. We
 could have used anythings else. We could have used both "a\_DayOfWeek"
 and "b\_DayOfWeek". All instances of "a\_DayofWeek would have been
 replaced with the same day of the week, but all instances of
-"b\_DayOfWeek" would have been replaced separately. This deliberately mimics how how pattern matching works in the Wolfram Language. 
+"b\_DayOfWeek" would have been replaced separately. 
 
-For example, suppose we want to test WolframAlpha with the WolframAlpha function. It should always return a Quantity expression for input like: "Days between Monday and Tuesday". But we want to run this test for all possible combinations of
+For example, suppose we want to test the WolframAlpha function. It should always return a Quantity expression for input like: "Days between Monday and Tuesday". But we want to run this test for all possible combinations of
 days of the week:
 ```Mathematica
     enumeratedVals =
@@ -102,16 +98,15 @@ days of the week:
     myAssertions =
 	 expandAllCombinations[enumeratedVals][myAssertionTemplate]
 ```
-Boht "a_DayOfWeek" and "b_DayOfWeek" will be replaced with days of the week, but will be replaced separately. We now have 7 times 7, or 49, testingAssertions! expandAllCombinations produces every possible combination for us.
+Both "a_DayOfWeek" and "b_DayOfWeek" will both be separately replaced with days of the week. This generates 7 times 7, or 49, testingAssertions. expandAllCombinations produces every possible combination for us.
 
 ### An Actual Example of How it is Used in Testing
 
-RandomWord is a function that returns a random value from a WordList.
-There are different kinds of WordLists like WordList\["Stopwords"\]. For
+RandomWord is a function that returns a random value from a corresponding WordList. WordList["Stopwords"] for example returns a list of some very common English words and RandomWord["Stopwords"] should return a random word from that list. For
 every way of calling WordList, there is a corresponding way to call
 RandomWord. What if we want to test this? Writing out all the possible
 combinations would create an unreadable and difficult to manage test
-suite. Here is an example of it could be tested. Let's define some of
+suite. Espcially since more kinds of WordLists might be added in the future. Here is an example of it could be tested. Let's define some of
 the inputs we might use:
 ```Mathematica
     enumVals = 
@@ -183,11 +178,11 @@ assertions:
 
 Note that if we hadn't used any random values, we could just decide to turn the testingAssertions into VerificationTest. TemplateTesting is also useful for creating large, static tests suites.  
  
-Complex Tags
+Nested Tags
 -----------------------
 
 "testAssertions" can be filled in in even more complicated ways.
-So far, we have used strings with one underscore to represent values that should be replaced. These strings are called "tags". The string "a_example" is actually just shorthand for `tag[{"a", "example"}]`. This is considered a simple tag. More complicated tags have 3 instead of 2 parts and allow us to work with more complicated examples.   
+So far, we have used strings with one underscore to represent values that should be replaced. These strings are called "tags". The string "a_example" is actually just shorthand for `tag[{"a", "example"}]`. This is considered a simple tag. More complicated tags have 3 instead of 2 parts and allow us to work with more complicated and nested examples.   
 
 The function `Interpreter\["Number"\] takes a string and tries to output the number that it represents. Consider this simple set of examples for Interpreter\["Number"\]. Each example has an example input and a corresponding example output stored as a list of Associations:
 ```Mathematica
@@ -245,6 +240,18 @@ And it produces nicely readable VerificationTests like:
         TestID->"BasicTest-myID"
     ]
 ```
+The third part of the tag allows us to easily mix in more complicatedexamples. For example, Interpreter\["Number"\] also can take a list of input and automatically maps over that input to produce a list of outputs. We could write a testing assertion to test this 
+
+```Mathematica
+	testingAssertion[
+		Interpreter["Number"][{"a_numberExample_Input","b_numberExample_Input"}]
+		==
+		{"a_numberExample_Output", "b_numberExample_Output"},
+                "ID" -> "myID"];
+```
+
+The resulting VerificationTests are easy to read and exhaustive over every possible combination of "numberExample"s.
+
 testAssertion Hijacking
 -----------------------
 
@@ -269,7 +276,7 @@ Otherwise it will not run. In effect it is transformed into:
         ]
     ]
 ```
-The idea is that no reasonable test actually begins with an If statement. We aren't testing the behavior of If. We are instead making a decision about what to test. 
+The idea is that no reasonable test actually begins with an If statement. We aren't testing the behavior of If. We are instead making a decision about what to test. In practice this is used to restrict certain testingAssertions to only certains kinds of examples. Sometimes we keep a field in a test example that determines if it should be ran with certain testingAssertions. For example, some examples may not work in certain functions. These examples can have fields with a flag in them to prevent them from be ran with those function's testingAssertions.
 
 ### Operator Hijacking
 
