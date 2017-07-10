@@ -1,11 +1,11 @@
-#TemplateTesting
+# TemplateTesting
 
 A package for randomized testing and for testing over exhaustive
 possible combinations of values.
 
-TemplateTesting is a minimalist templating system for tests that encourages DRY coding by factoring otherwise repetitive tests into templates and data. Tests are described as templates which are later filled in with all possible data combinations. 
+TemplateTesting is a minimalist templating system that factors otherwise repetitive tests into templates and data. Tests are described as templates which are later filled in with all possible data combinations. 
 
-TemplateTesting is inspired feaures in [Haskell's QuickCheck](https://wiki.haskell.org/Introduction_to_QuickCheck1) and [Python's Hypothesis](http://hypothesis.works/). It's significantly different however reflecting my own thoughts about what is important in testing and some unique features of the Wolfram Language.  
+TemplateTesting is inspired feaures in [Haskell's QuickCheck](https://wiki.haskell.org/Introduction_to_QuickCheck1) and [Python's Hypothesis](http://hypothesis.works/). It has many significant differences however, which reflect my personal preferences and the homoiconitiy of the Wolfram Language.  
 
 testingAssertions
 -----------------
@@ -18,9 +18,9 @@ testingAssertions
 		StringQ["This is a string"],
 		"ID" ->"SimpleTest"] 
 ```
-The "ID" is optional but should always be used. A assertions ID will become part of the ID of any test based on it.
+The "ID" is optional, but should always be used any. An assertion's ID will become part of the TestID of any test based on it.
 
-A testingAssertion does not evaluate by itself. It is just useful template for programmatically creating tests to run. To actually test a testingAssertion, it has to ran by "testTestingAssertion".
+To run a testingAssertion call "testTestingAssertion".
 "testTestingAssertion" first takes a string which is the base of the
 TestID and then takes the testing assertion, turning it into a
 VerificationTest.
@@ -44,7 +44,7 @@ The TemplateTesting package provies tools for running testingAssertions, but als
 Generating testingAssertions with expandAllCombinations
 -------------------------------------------------------
 
-Interpreter\["ComputedDate"\] is a function that takes a string and returns what day of the week it represents. We wante to test that Interpreter\["ComputedDate"\] returns a DateObject for every day of the week:
+Interpreter\["ComputedDate"\] is a function that takes a string and returns which day of the week the string might represent. We wante to test that Interpreter\["ComputedDate"\] returns a DateObject for every day of the week:
 
 ```Mathematica
     myAssertions = {
