@@ -20,7 +20,7 @@ tag::usage = "a description of a resource in the example set";
 Begin["`Private`"] (* Begin Private Context *) 
 
 SetAttributes[testingAssertion, HoldAll]
-Options[testingAssertion] = {"ID" -> ""};
+Options[testingAssertion] = {"ID" -> "", "Pre" -> Nothing, "Post" -> Nothing}
 
 
 (* tagLookup is similar to Lookup but uses tag expressions.
@@ -105,10 +105,14 @@ testTestingAssertion[baseTestID_String:""][testingAssertion[(If|Implies)[cond_, 
   	Message[testTestingAssertion::logic, cond]];
 
 testTestingAssertion[baseTestID_String:""][testingAssertion[SameQ[part1_, part2_], OptionsPattern[]]] :=
-  VerificationTest[
-  	part1, 
-  	part2, 
-  	TestID :> convertToTestIDString[baseTestID, OptionValue[testingAssertion, "ID"]]];
+	Internal`WithLocalSettings[
+		OptionValue[testingAssertion, "Pre"],
+		VerificationTest[
+			part1, 
+  			part2, 
+  		TestID :> convertToTestIDString[baseTestID, OptionValue[testingAssertion, "ID"]]],
+		OptionValue[testingAssertion, "Post"]
+	];
 
 comparingFunctions = {Equal, MatchQ, StringMatchQ, SubsetQ, MemberQ, FreeQ, StringFreeQ, StringContainsQ, StringStartsQ, StringEndsQ,
 					 IntersectingQ, GeoWithinQ, FreeQ, UnsameQ, 
@@ -116,17 +120,23 @@ comparingFunctions = {Equal, MatchQ, StringMatchQ, SubsetQ, MemberQ, FreeQ, Stri
 					 Less, LessEqual, Greater, GreaterEqual};
 
 testTestingAssertion[baseTestID_String:""][testingAssertion[compare_[part1_, part2_] /;(MemberQ[comparingFunctions, compare]), OptionsPattern[]]] :=
-  VerificationTest[
-  	part1, 
-  	part2, 
-  	TestID :> convertToTestIDString[baseTestID, OptionValue[testingAssertion, "ID"]], 
-  	SameTest -> compare];
+	Internal`WithLocalSettings[
+		OptionValue[testingAssertion, "Pre"],
+		VerificationTest[
+  			part1, 
+  			part2, 
+  			TestID :> convertToTestIDString[baseTestID, OptionValue[testingAssertion, "ID"]], 
+  			SameTest -> compare],
+  		OptionValue[testingAssertion, "Post"]];
 
 testTestingAssertion[baseTestID_String:""][testingAssertion[test_, OptionsPattern[]]] := 
-  VerificationTest[
-  	test, 
-  	True, 
-  	TestID :> convertToTestIDString[baseTestID, OptionValue[testingAssertion, "ID"]]];
+	Internal`WithLocalSettings[
+		OptionValue[testingAssertion, "Pre"],
+		VerificationTest[
+	  		test, 
+	  		True, 
+	  		TestID :> convertToTestIDString[baseTestID, OptionValue[testingAssertion, "ID"]]],
+	  	OptionValue[testingAssertion, "Post"]];;
   
 testTestingAssertion[___][testingAssertion[___, OptionsPattern[]]] := 
   Message[testTestingAssertion::invalid, OptionValue[testingAssertion, "ID"]];  
