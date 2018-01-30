@@ -92,11 +92,22 @@ cleanString[otherwise_] := Message[cleanString::Invalid, ToString@otherwise];
 
 (* Converts a list or string into a string suitable for the test system *)
 convertToTestIDString[str_String] := cleanString[str];
-convertToTestIDString[lst_List]:= cleanString@StringRiffle[#,"-"]&@Map[ToString]@lst;
-convertToTestIDString[front_String, rest_String]:= cleanString[front<> "-" <> rest];
-convertToTestIDString["", rest_List]:= convertToTestIDString[rest]
-convertToTestIDString[front_String, ""]:= convertToTestIDString[front];
-convertToTestIDString[front_String, rest_List]:= front<> "-" <> convertToTestIDString[rest];
+convertToTestIDString[lst_List] := 
+	cleanString@StringRiffle[#,"-"]&@
+	Map[convertToTestIDString]@DeleteCases[#, ""]&@
+	lst;
+convertToTestIDString[ent_Entity] := 
+	convertToTestIDString@CanonicalName@ent;
+convertToTestIDString[else_] :=
+	cleanString@TextString[else];
+convertToTestIDString[front_String, rest_String]:= 
+	cleanString[front<> "-" <> rest];
+convertToTestIDString["", rest_List]:= 
+	convertToTestIDString[rest]
+convertToTestIDString[front_String, ""]:= 
+	convertToTestIDString[front];
+convertToTestIDString[front_String, rest_List]:= 
+	front<> "-" <> convertToTestIDString[rest];
 
 testTestingAssertion[baseTestID_String:""][testingAssertion[(If|Implies)[cond_, test_], OptionsPattern[]]] := 
   If[cond, 
