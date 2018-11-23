@@ -22,6 +22,7 @@ Begin["`Private`"] (* Begin Private Context *)
 SetAttributes[testingAssertion, HoldAll]
 Options[testingAssertion] = {"ID" -> "", "Pre" -> Nothing, "Post" -> Nothing}
 
+associationsToLists = ReplaceAll[Association[content___] :> {content}];
 
 (* tagLookup is similar to Lookup but uses tag expressions.
    tags are a way of handling nested associations and rules. 
@@ -76,7 +77,7 @@ expandAllCombinations[table_][assert_testingAssertion] :=
 		basictags = getBasicTags@allTags;
 		expandedbasicTagReplacementRules = 
 			 Map[Thread[basictags -> #] &]@
-			  Tuples@Normal@Map[tagLookup[table], basictags];
+			  Tuples@associationToLists@@Map[tagLookup[table], basictags];
 		Map[
 			applyExpandedTableToAssertion[tagAssertion],
 			expandedbasicTagReplacementRules]	  
