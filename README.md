@@ -1,11 +1,10 @@
 # TemplateTesting
 
-A package for randomized testing and for testing over exhaustive
-possible combinations of values.
+### Randomized testing over exhaustive possible combinations of values.
 
 TemplateTesting is a minimalist templating system that factors otherwise repetitive tests into templates and data. Tests are described as templates which are later filled in with all possible data combinations. 
 
-TemplateTesting is inspired feaures in [Haskell's QuickCheck](https://wiki.haskell.org/Introduction_to_QuickCheck1) and [Python's Hypothesis](http://hypothesis.works/). It has many significant differences however, which reflect my personal preferences and the homoiconitiy of the Wolfram Language.  
+Many feature of TemplateTesting are inspired by [Haskell's QuickCheck](https://wiki.haskell.org/Introduction_to_QuickCheck1) and [Python's Hypothesis](http://hypothesis.works/). It has many significant differences however, which reflect my personal preferences and features of the Wolfram Language such as homoiconitiy.  
 
 testingAssertions
 -----------------
@@ -18,18 +17,16 @@ testingAssertions
 		StringQ["This is a string"],
 		"ID" ->"SimpleTest"] 
 ```
-The "ID" is optional, but should always be used any. An assertion's ID will become part of the TestID of any test based on it.
 
 To run a testingAssertion call "testTestingAssertion".
-"testTestingAssertion" first takes a string which is the base of the
-TestID and then takes the testing assertion, turning it into a
-VerificationTest.
+"testTestingAssertion" takes a string which is the base of the
+TestID and a testing assertion. It produces a VerificationTest.
 
 ```Mathematica
      testTestingAssertion["BasicTest"][myAssertion] 
 ```
-This turns into a pretty straightforward VerificationTest, which is
-executed immediately.
+
+And executes the VerificationtTest.
 
 ```Mathematica
     VerificationTest[
@@ -44,7 +41,7 @@ The TemplateTesting package provies tools for running testingAssertions, but als
 Generating testingAssertions with expandAllCombinations
 -------------------------------------------------------
 
-Interpreter\["ComputedDate"\] is a function that takes a string and returns which day of the week the string might represent. We wante to test that Interpreter\["ComputedDate"\] returns a DateObject for every day of the week:
+Interpreter\["ComputedDate"\] is a function that takes a string and returns which day of the week the a given string might represent. We want to test that Interpreter\["ComputedDate"\] returns a DateObject for every day of the week. One way we might do this is to create a list of testingAssertions - one for each day of the week. In this example, we check that Interpreter returns a valid Date using DateObjectQ:
 
 ```Mathematica
     myAssertions = {
@@ -60,8 +57,9 @@ Interpreter\["ComputedDate"\] is a function that takes a string and returns whic
 
     Map[testTestingAssertions["SemanticDate"][myAssertions]
 ```
-This is verbose. The templateTesting package provides a function called
-**expandAllCombinations** to make this easy:
+This is verbose and repetitive. The templateTesting package provides a function called
+**expandAllCombinations** which takes an enumarted list of examples and substitutes them into the assertion. 
+
 ```Mathematica
     enumeratedVals = 
 	{"DayOfWeek" ->
@@ -76,7 +74,7 @@ This is verbose. The templateTesting package provides a function called
     myAssertions =
 	 expandAllCombinations[enumeratedVals][myAssertionTemplate]
 ```
-This generates the list of testingAssertions we wanted. The magic part of this is the string "a\_DayOfWeek". This intentionally looks similar to the Wolfram Languae's pattern matching syntax. expandAllCombinations takes "a\_DayOfWeek" and replaces all instances of "a\_DayOfWeek" with a particular value from "DayOfWeek" in
+This generates the list of testingAssertions we wanted. The magic part of this is the string "a\_DayOfWeek". This intentionally looks similar to the Wolfram Language's pattern matching syntax. "expandAllCombinations" takes "a\_DayOfWeek" and replaces all instances of "a\_DayOfWeek" with a particular value from "DayOfWeek" in
 enumeratedVals. The use of "a" before the underscore is not special. We
 could have used anythings else. We could have used both "a\_DayOfWeek"
 and "b\_DayOfWeek". All instances of "a\_DayofWeek would have been
@@ -176,7 +174,7 @@ assertions:
     Map[testTestingAssertion["RandomWordTesting"], expandedAssertions]
 ```
 
-Note that if we hadn't used any random values, we could just decide to turn the testingAssertions into VerificationTest. TemplateTesting is also useful for creating large, static tests suites.  
+Note that if we hadn't used any random values, we could just decide to turn the testingAssertions into VerificationTest. TemplateTesting is also useful for creating large, static tests suites.
  
 Nested Tags
 -----------------------
@@ -304,7 +302,7 @@ Special Behavior for "ID"
 IDs for every test. testingAssertions do a number of things to make life
 easier.
 
--   Non-roman and accented characters are Transliterated to ASCII. All
+-   Non-roman and accented characters are transliterated to ASCII. All
     elements of the "ID" that wouldn't be suitable for "TestID" in our
     testing system are converted or removed.
 -   "ID" can be given as a list. All the elements of the list will be
