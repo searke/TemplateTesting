@@ -316,6 +316,15 @@ easier.
     ]
 ```
 
+- The string "Counter" is automatically replaced with an integer that increments whenever that same testID is used. So in the example before, the tests will appear as "MyTest-1", "MyTest-2", and so on.
+
+```Mathematica
+    testingAssertion[
+        True, 
+        "ID" -> {"MyTest", "Counter"}
+    ]
+```
+
 Suggestions
 -----------
 
